@@ -1,4 +1,4 @@
-module EngineWorker
+module github.com/D-Gine/EngineWorker
 
 go 1.27.3
 
