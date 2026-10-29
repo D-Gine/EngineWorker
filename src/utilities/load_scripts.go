@@ -8,12 +8,41 @@ import (
 	"go.starlark.net/syntax"
 )
 
+func EmitBuiltin(reg *ece.Registry) *starlark.Builtin {
+	return starlark.NewBuiltin("emit", func(
+		thread *starlark.Thread,
+		b *starlark.Builtin,
+		args starlark.Tuple,
+		kwargs []starlark.Tuple,
+	) (starlark.Value, error) {
+		var name string
+
+		if err := starlark.UnpackPositionalArgs("event", args, nil, 1, &name); err != nil {
+			return starlark.MakeInt(-1), err
+		}
+
+		event := &APIEvent{Name: name, Metadata: map[string]any{}}
+		event.Name = name
+
+		for _, kv := range kwargs {
+			v, err := StarlarkToGo(kv[1])
+			if err == nil {
+				event.Metadata[string(kv[0].(starlark.String))] = v
+			}
+		}
+		reg.EmitEventByName(event.Name, *event)
+		return starlark.MakeInt(0), nil
+	})
+}
+
 func Load_scripts(reg *ece.Registry, event ece.Event, script string) {
 	thread := &starlark.Thread{Name: "Script thread"}
 
 	ev, ok := event.(APIEvent)
 
-	predeclared := starlark.StringDict{}
+	predeclared := starlark.StringDict{
+		"emit": EmitBuiltin(reg),
+	}
 	if ok {
 		predeclared["event_name"] = starlark.String(ev.Name)
 

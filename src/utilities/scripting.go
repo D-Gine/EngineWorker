@@ -125,3 +125,60 @@ func GoToStarlark(v any) (starlark.Value, error) {
 
 	return nil, fmt.Errorf("unsupported type: %T", v)
 }
+
+func StarlarkToGo(v starlark.Value) (any, error) {
+	if v == starlark.None {
+		return nil, nil
+	}
+	if s, ok := starlark.AsString(v); ok {
+		return s, nil
+	}
+	switch x := v.(type) {
+	case starlark.Bool:
+		return bool(x), nil
+	case starlark.Int:
+		i, ok := x.Int64()
+		if !ok {
+			return nil, fmt.Errorf("integer out of int64 range")
+		}
+		return i, nil
+	case starlark.Float:
+		return float64(x), nil
+	case *starlark.List:
+		out := make([]any, 0, x.Len())
+		for i := 0; i < x.Len(); i++ {
+			item, err := StarlarkToGo(x.Index(i))
+			if err != nil {
+				return nil, err
+			}
+			out = append(out, item)
+		}
+		return out, nil
+	case starlark.Tuple:
+		out := make([]any, 0, len(x))
+		for _, item := range x {
+			gv, err := StarlarkToGo(item)
+			if err != nil {
+				return nil, err
+			}
+			out = append(out, gv)
+		}
+		return out, nil
+	case *starlark.Dict:
+		out := map[string]any{}
+		for _, item := range x.Items() {
+			k, ok := starlark.AsString(item[0])
+			if !ok {
+				return nil, fmt.Errorf("dict key must be string, got %s", item[0].Type())
+			}
+			gv, err := StarlarkToGo(item[1])
+			if err != nil {
+				return nil, err
+			}
+			out[k] = gv
+		}
+		return out, nil
+	default:
+		return nil, fmt.Errorf("unsupported starlark return type: %s", v.Type())
+	}
+}
