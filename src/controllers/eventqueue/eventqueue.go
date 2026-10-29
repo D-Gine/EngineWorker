@@ -3,6 +3,7 @@ package eventqueue
 import (
 	"EngineWorker/src/utilities"
 	"net/http"
+	"strconv"
 
 	ece "github.com/D-Gine/ECE"
 	"github.com/gin-gonic/gin"
@@ -48,7 +49,26 @@ func Subscribe(c *gin.Context) {
 func Process(c *gin.Context) {
 	registry := c.MustGet("registry").(*ece.Registry)
 
-	registry.ProcessEvents()
+	event_nb, err := strconv.Atoi(c.DefaultQuery("n", "-1"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid number of events to process"})
+		return
+	}
+	var processed []ece.Pair[string, ece.Event]
+	if event_nb > 0 {
+		processed = registry.ProcessManyEvents(event_nb)
+	} else {
+		processed = registry.ProcessEvents()
+	}
 
-	c.JSON(http.StatusOK, gin.H{"Processed events": "ok"})
+	if len(processed) == 0 {
+		c.JSON(http.StatusNoContent, gin.H{"message": "No events to process"})
+		return
+	}
+
+	answer := gin.H{"Processed events": make([]string, 0)}
+	for _, event := range processed {
+		answer["Processed events"] = append(answer["Processed events"].([]string), event.First)
+	}
+	c.JSON(http.StatusOK, answer)
 }

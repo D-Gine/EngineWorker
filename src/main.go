@@ -18,7 +18,7 @@ func main() {
 
 	events := router.Group("/events")
 	{
-		events.POST("/process", eventqueue.Process)
+		events.GET("/process", eventqueue.Process)
 		events.POST("/enqueue", eventqueue.Enqueue)
 		events.POST("/subscribe", eventqueue.Subscribe)
 	}
