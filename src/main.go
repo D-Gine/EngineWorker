@@ -1,12 +1,13 @@
 package main
 
 import (
+	"EngineWorker/src/controllers/eventqueue"
+
 	ece "github.com/D-Gine/ECE"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// Create a Gin router with default middleware (logger and recovery)
 	router := gin.Default()
 	registry := ece.NewRegistry()
 
@@ -14,6 +15,19 @@ func main() {
 		c.Set("registry", registry)
 		c.Next()
 	})
+
+	events := router.Group("/events")
+	{
+		events.GET("/process", eventqueue.Process)
+		events.GET("/queue", eventqueue.GetEventQueue)
+
+		events.POST("/enqueue", eventqueue.Enqueue)
+		events.POST("/subscribe", eventqueue.Subscribe)
+
+		events.PUT("/breakpoint", eventqueue.EnqueueBreakpoint)
+	}
+
+	// components := router.Group("/components")
 
 	// Start server on port 8080 (default)
 	// Server will listen on 0.0.0.0:8080 (localhost:8080 on Windows)
