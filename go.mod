@@ -3,7 +3,7 @@ module EngineWorker
 go 1.27.3
 
 require (
-	github.com/D-Gine/ECE v1.0.4 // indirect
+	github.com/D-Gine/ECE v1.0.5-0.20261031195925-5cf6f993ca95 // indirect
 	github.com/bytedance/gopkg v0.1.3 // indirect
 	github.com/bytedance/sonic v1.15.0 // indirect
 	github.com/bytedance/sonic/loader v0.5.0 // indirect

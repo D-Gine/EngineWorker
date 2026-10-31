@@ -72,3 +72,35 @@ func Process(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, answer)
 }
+
+func EnqueueBreakpoint(c *gin.Context) {
+	registry := c.MustGet("registry").(*ece.Registry)
+
+	registry.EnqueueEvent(ece.BreakpointEvent{})
+
+	c.JSON(http.StatusAccepted, gin.H{"status": "ok"})
+}
+
+func GetEventQueue(c *gin.Context) {
+	registry := c.MustGet("registry").(*ece.Registry)
+
+	events := registry.GetEventQueue()
+
+	answer := gin.H{"queue": make([]map[string]any, 0)}
+	for _, event := range events {
+		if apiEvent, ok := event.Second.(utilities.APIEvent); ok {
+			answer["Queued events"] = append(answer["Queued events"].([]map[string]any), map[string]any{
+				"Name":     apiEvent.Name,
+				"Metadata": apiEvent.Metadata,
+			})
+		} else if _, ok := event.Second.(ece.BreakpointEvent); ok {
+			answer["Queued events"] = append(answer["Queued events"].([]map[string]any), map[string]any{
+				"Name":     "BreakpointEvent",
+				"Metadata": make(map[string]any),
+			})
+		} else {
+			continue
+		}
+	}
+	c.JSON(http.StatusOK, answer)
+}
