@@ -18,7 +18,4 @@ GIN_MODE=debug
 
 # NETWORKS
 BACK_NETWORK=dengine-back-net
-
-# VOLUMES
-API_VOLUME=dengine-api-volume
 ```
