@@ -17,15 +17,18 @@ func main() {
 	registry := ece.NewRegistry()
 
 	// Database setup
+	debug.PrintMsg("=== DATABASE ===")
 	err := database.ConnectDatabase()
 	if err != nil {
 		debug.PrintErrorMsg("failed to connect to database:" + err.Error())
 	}
+	database.RetreiveRoomInformations()
 
 	router.Use(func(c *gin.Context) {
 		c.Set("registry", registry)
 		c.Next()
 	})
+	debug.PrintMsg("")
 
 	if err := router.Run(port); err != nil {
 		debug.PrintErrorMsg("Failed to start server:" + err.Error())

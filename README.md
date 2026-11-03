@@ -4,6 +4,10 @@
 ### Env
 For this project you need the following environment variables:
 ```
+# ROOM INFORMATIONS
+RULESET_ID="aaaaa"
+CAMPAIGN_ID="aaaaa"
+
 # DATABASE
 DB_HOST=dengine-db-{x.x.x}
 DB_PORT=5432
