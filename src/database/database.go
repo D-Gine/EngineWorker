@@ -24,7 +24,7 @@ func ConnectDatabase() error {
 		host, port, user, dbname, pass)
 	DB, errSql := sql.Open("postgres", psqlSetup)
 	if errSql != nil {
-		debug.PrintMsg("There is an error while connecting to the database ", errSql)
+		debug.PrintErrorMsg("There is an error while connecting to the database " + errSql.Error())
 		return errSql
 	}
 	debug.PrintMsg("Setup OK. Trying to ping database...")
