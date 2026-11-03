@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	ece "github.com/D-Gine/ECE"
 	"github.com/D-Gine/EngineWorker/src/database"
+	"github.com/D-Gine/EngineWorker/src/debug"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +19,7 @@ func main() {
 	// Database setup
 	err := database.ConnectDatabase()
 	if err != nil {
-		fmt.Println("Failed to connect to database:", err)
+		debug.PrintErrorMsg("failed to connect to database:" + err.Error())
 	}
 
 	router.Use(func(c *gin.Context) {
@@ -28,7 +28,7 @@ func main() {
 	})
 
 	if err := router.Run(port); err != nil {
-		fmt.Println("Failed to start server:", err)
+		debug.PrintErrorMsg("Failed to start server:" + err.Error())
 		os.Exit(1)
 	}
 }

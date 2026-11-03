@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/D-Gine/EngineWorker/src/debug"
 	_ "github.com/lib/pq"
 )
 
@@ -18,19 +19,19 @@ func ConnectDatabase() error {
 	dbname := os.Getenv("DB_NAME")
 	pass := os.Getenv("DB_PWD")
 
-	fmt.Println("Trying to connect to database...")
+	debug.PrintMsg("Trying to connect to database...")
 	psqlSetup := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
 		host, port, user, dbname, pass)
 	DB, errSql := sql.Open("postgres", psqlSetup)
 	if errSql != nil {
-		fmt.Println("There is an error while connecting to the database ", errSql)
+		debug.PrintMsg("There is an error while connecting to the database ", errSql)
 		return errSql
 	}
-	fmt.Println("Setup OK. Trying to ping database...")
+	debug.PrintMsg("Setup OK. Trying to ping database...")
 	err := DB.Ping()
 	if err != nil {
 		return err
 	}
-	fmt.Println("Ping OK\nSuccessfully connected to database!")
+	debug.PrintSuccess("Successfully connected to database!")
 	return nil
 }
