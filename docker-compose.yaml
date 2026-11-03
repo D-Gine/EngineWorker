@@ -1,5 +1,5 @@
 services:
-  dengine-api:
+  dengine-worker:
     container_name: dengine-worker-${VERSION}
     build: .
     env_file: ".env"
