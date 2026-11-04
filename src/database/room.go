@@ -32,33 +32,33 @@ func verify_campaign() error {
 }
 
 func RetreiveRoomInformations() {
-	debug.PrintMsg("retreiving rooms informations...")
+	debug.Message("retreiving rooms informations...")
 	Room.Rulest = os.Getenv("RULESET_ID")
 	Room.Campaign = os.Getenv("CAMPAIGN_ID")
 	var exit_err bool = false
 	if Room.Rulest == "" {
-		debug.PrintErrorMsg("RULESET_ID variable not found in environt")
+		debug.ErrorMessage("RULESET_ID variable not found in environt")
 		exit_err = true
 	} else {
 		err := verify_ruleset()
 		if err != nil {
-			debug.PrintError(err)
+			debug.Error(err)
 			exit_err = true
 		}
 	}
 	if Room.Campaign == "" {
-		debug.PrintErrorMsg("CAMPAIGN_ID variable not found in environt")
+		debug.ErrorMessage("CAMPAIGN_ID variable not found in environt")
 		exit_err = true
 	} else {
 		err := verify_campaign()
 		if err != nil {
-			debug.PrintError(err)
+			debug.Error(err)
 			exit_err = true
 		}
 	}
 	if exit_err {
 		return
 	}
-	debug.PrintSuccess("room informations found")
-	debug.PrintMsg("running campaign on\n\t- Ruleset: " + Room.Rulest + "\n\t- Campaign: " + Room.Campaign)
+	debug.Success("room informations found")
+	debug.Message("running campaign on\n\t- Ruleset: " + Room.Rulest + "\n\t- Campaign: " + Room.Campaign)
 }
