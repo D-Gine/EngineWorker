@@ -22,7 +22,8 @@ func ConnectDatabase() error {
 	debug.PrintMsg("Trying to connect to database...")
 	psqlSetup := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
 		host, port, user, dbname, pass)
-	DB, errSql := sql.Open("postgres", psqlSetup)
+	var errSql error
+	DB, errSql = sql.Open("postgres", psqlSetup)
 	if errSql != nil {
 		debug.PrintErrorMsg("There is an error while connecting to the database " + errSql.Error())
 		return errSql
