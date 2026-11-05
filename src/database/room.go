@@ -35,7 +35,7 @@ func RetreiveRoomInformations() {
 	debug.Message("retreiving rooms informations...")
 	Room.Rulest = os.Getenv("RULESET_ID")
 	Room.Campaign = os.Getenv("CAMPAIGN_ID")
-	var exit_err bool = false
+	exit_err := false
 	if Room.Rulest == "" {
 		debug.ErrorMessage("RULESET_ID variable not found in environt")
 		exit_err = true
