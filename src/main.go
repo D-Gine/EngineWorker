@@ -2,19 +2,35 @@ package main
 
 import (
 	"EngineWorker/src/controllers/eventqueue"
+	"os"
+
+	"EngineWorker/src/database"
+	"EngineWorker/src/debug"
 
 	ece "github.com/D-Gine/ECE"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	port := ":" + os.Getenv("API_PORT")
+
+	// Create a Gin router with default middleware (logger and recovery)
 	router := gin.Default()
 	registry := ece.NewRegistry()
+
+	// Database setup
+	debug.PrintMsg("=== DATABASE ===")
+	err := database.ConnectDatabase()
+	if err != nil {
+		debug.PrintErrorMsg("failed to connect to database:" + err.Error())
+	}
+	database.RetreiveRoomInformations()
 
 	router.Use(func(c *gin.Context) {
 		c.Set("registry", registry)
 		c.Next()
 	})
+	debug.PrintMsg("")
 
 	events := router.Group("/events")
 	{
@@ -27,9 +43,8 @@ func main() {
 		events.PUT("/breakpoint", eventqueue.EnqueueBreakpoint)
 	}
 
-	// components := router.Group("/components")
-
-	// Start server on port 8080 (default)
-	// Server will listen on 0.0.0.0:8080 (localhost:8080 on Windows)
-	router.Run()
+	if err := router.Run(port); err != nil {
+		debug.PrintErrorMsg("Failed to start server:" + err.Error())
+		os.Exit(1)
+	}
 }

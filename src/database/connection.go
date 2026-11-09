@@ -1,0 +1,38 @@
+package database
+
+import (
+	"database/sql"
+	"fmt"
+	"os"
+	"strconv"
+
+	"github.com/D-Gine/EngineWorker/src/debug"
+	_ "github.com/lib/pq"
+)
+
+var DB *sql.DB
+
+func ConnectDatabase() error {
+	host := os.Getenv("DB_HOST")
+	port, _ := strconv.Atoi(os.Getenv("DB_PORT"))
+	user := os.Getenv("DB_USER")
+	dbname := os.Getenv("DB_NAME")
+	pass := os.Getenv("DB_PWD")
+
+	debug.Message("Trying to connect to database...")
+	psqlSetup := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
+		host, port, user, dbname, pass)
+	var errSql error
+	DB, errSql = sql.Open("postgres", psqlSetup)
+	if errSql != nil {
+		debug.ErrorMessage("There is an error while connecting to the database " + errSql.Error())
+		return errSql
+	}
+	debug.Message("Setup OK. Trying to ping database...")
+	err := DB.Ping()
+	if err != nil {
+		return err
+	}
+	debug.Success("Successfully connected to database!")
+	return nil
+}

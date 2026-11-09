@@ -1,0 +1,20 @@
+services:
+  dengine-worker:
+    container_name: dengine-worker-${VERSION}
+    build: .
+    env_file: ".env"
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    networks:
+      - back
+    volumes:
+      - api:/var/www/dengine-worker-${VERSION}/
+
+volumes:
+  api:
+    name: ${API_VOLUME}
+
+networks:
+  back:
+    external: true
+    name: ${BACK_NETWORK}
