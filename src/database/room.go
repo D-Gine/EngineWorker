@@ -28,6 +28,17 @@ func verify_ruleset() error {
 }
 
 func verify_campaign() error {
+	// TO DO after db
+	// var id string
+	// err = DB.QueryRow(`
+	// 	SELECT
+	// 		c.id
+	// 	FROM campaign c
+	// 	WHERE c.id=$1
+	// `, Room.Campaign).Scan(&id)
+	// if err != nil {
+	// 	return err
+	// }
 	return nil
 }
 
