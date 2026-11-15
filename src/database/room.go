@@ -3,7 +3,7 @@ package database
 import (
 	"os"
 
-	"github.com/D-Gine/EngineWorker/src/debug"
+	"EngineWorker/src/debug"
 )
 
 type RoomIds struct {

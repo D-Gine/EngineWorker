@@ -1,11 +1,13 @@
 package main
 
 import (
+	"EngineWorker/src/controllers/eventqueue"
 	"os"
 
+	"EngineWorker/src/database"
+	"EngineWorker/src/debug"
+
 	ece "github.com/D-Gine/ECE"
-	"github.com/D-Gine/EngineWorker/src/database"
-	"github.com/D-Gine/EngineWorker/src/debug"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,6 +31,17 @@ func main() {
 		c.Next()
 	})
 	debug.Message("")
+
+	events := router.Group("/events")
+	{
+		events.GET("/process", eventqueue.Process)
+		events.GET("/queue", eventqueue.GetEventQueue)
+
+		events.POST("/enqueue", eventqueue.Enqueue)
+		events.POST("/subscribe", eventqueue.Subscribe)
+
+		events.PUT("/breakpoint", eventqueue.EnqueueBreakpoint)
+	}
 
 	if err := router.Run(port); err != nil {
 		debug.ErrorMessage("Failed to start server:" + err.Error())

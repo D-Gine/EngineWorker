@@ -6,7 +6,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/D-Gine/EngineWorker/src/debug"
+	"EngineWorker/src/debug"
+
 	_ "github.com/lib/pq"
 )
 
