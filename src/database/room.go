@@ -7,11 +7,16 @@ import (
 )
 
 type RoomIds struct {
+	Errored  bool
 	Campaign string
 	Rulest   string
 }
 
-var Room RoomIds
+var Room RoomIds = RoomIds{
+	Errored:  true,
+	Campaign: "",
+	Rulest:   "",
+}
 
 func verify_ruleset() error {
 	var id string
@@ -70,6 +75,7 @@ func RetreiveRoomInformations() {
 	if exit_err {
 		return
 	}
+	Room.Errored = false
 	debug.Success("room informations found")
 	debug.Message("running campaign on\n\t- Ruleset: " + Room.Rulest + "\n\t- Campaign: " + Room.Campaign)
 }

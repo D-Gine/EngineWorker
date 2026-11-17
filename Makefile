@@ -16,7 +16,10 @@ MAIN_FILE = ./src/main.go
 # SWAG = $(GO) run github.com/swaggo/swag/cmd/swag@latest
 # SWAG = swag
 
-all: build
+setup:
+	git submodule update --init --recursive
+
+all:	setup build
 
 build:
 	# $(SWAG) init -g $(MAIN_FILE) -o $(DOCS_FOLDER)

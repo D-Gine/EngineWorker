@@ -2,6 +2,7 @@ package main
 
 import (
 	"EngineWorker/src/controllers/eventqueue"
+	"EngineWorker/src/controllers/room"
 	"os"
 
 	"EngineWorker/src/database"
@@ -31,6 +32,11 @@ func main() {
 		c.Next()
 	})
 	debug.Message("")
+
+	rooms := router.Group("/room")
+	{
+		rooms.POST("/retreive_data", room.RetreiveData)
+	}
 
 	events := router.Group("/events")
 	{

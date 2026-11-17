@@ -42,8 +42,7 @@ if [[ $* == '--no-update' ]]; then
 else
     echo "Updating submodules"
     echo "run '--no-update' if you don't want to update submodule"
-    git submodule init
-    git submodule update --recursive
+    git submodule update --init --recursive
     echo "${G}DONE${NC}"
 fi
 
