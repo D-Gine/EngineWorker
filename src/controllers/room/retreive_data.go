@@ -101,6 +101,7 @@ func create_new_registry(entities []Entity) (*ece.Registry, error) {
 			err := reg.AddComponentByName[any](idx, sc.Type_id, sc.Value)
 			if err != nil {
 				debug.ErrorMessage(fmt.Sprintf("could not add component '%s' to entity '%s'(number %d). %s", sc.Id, e.Id, idx, err.Error()))
+				return nil, err
 			} else {
 				debug.Message(fmt.Sprintf("Added component %s(%s) to %s(%d - %s)", sc.Name, sc.Type_id, e.Name, idx, e.Id))
 			}
@@ -110,11 +111,13 @@ func create_new_registry(entities []Entity) (*ece.Registry, error) {
 			err := reg.AddComponentByName(idx, dc.Type_id, dc.Value)
 			if err != nil {
 				debug.ErrorMessage(fmt.Sprintf("could not add component '%s' to entity '%s'(number %d). %s", dc.Id, e.Id, idx, err.Error()))
+				return nil, err
 			} else {
 				debug.Message(fmt.Sprintf("Added component %s(%s) to %s(%d - %s)", dc.Name, dc.Type_id, e.Name, idx, e.Id))
 			}
 		}
 	}
+	debug.Ok("done adding every components to registry")
 
 	return reg, nil
 }
@@ -125,23 +128,29 @@ func RetreiveData(c *gin.Context) {
 		return
 	}
 
+	debug.Message("Retreiving row entities from database...")
 	rows, err := retreive_entities_rows()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "retreiving raw entities from database... " + err.Error()})
 		return
 	}
+	debug.Ok("row entities retreived")
 
+	debug.Message("Entities data verifications...")
 	entities, err := retreive_entities(rows)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "reading raw entities... " + err.Error()})
 		return
 	}
+	debug.Ok("entities info and components verified")
 
+	debug.Message("Creating the new registry")
 	new_reg, err := create_new_registry(entities)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "inserting data into registry... " + err.Error()})
 		return
 	}
+	debug.Success("new registry created")
 
 	c.Set("registry", new_reg)
 	// TODO change return status ?
