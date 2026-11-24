@@ -102,7 +102,7 @@ func create_new_registry(entities []Entity) (*ece.Registry, error) {
 			if err != nil {
 				debug.ErrorMessage(fmt.Sprintf("could not add component '%s' to entity '%s'(number %d). %s", sc.Id, e.Id, idx, err.Error()))
 			} else {
-				debug.Message(fmt.Sprintf("Added component %s(%s) to %s(%d - %s)", sc.Name, sc.Id, e.Name, idx, e.Id))
+				debug.Message(fmt.Sprintf("Added component %s(%s) to %s(%d - %s)", sc.Name, sc.Type_id, e.Name, idx, e.Id))
 			}
 		}
 		for _, dc := range e.Dc {
@@ -111,7 +111,7 @@ func create_new_registry(entities []Entity) (*ece.Registry, error) {
 			if err != nil {
 				debug.ErrorMessage(fmt.Sprintf("could not add component '%s' to entity '%s'(number %d). %s", dc.Id, e.Id, idx, err.Error()))
 			} else {
-				debug.Message(fmt.Sprintf("Added component %s(%s) to %s(%d - %s)", dc.Name, dc.Id, e.Name, idx, e.Id))
+				debug.Message(fmt.Sprintf("Added component %s(%s) to %s(%d - %s)", dc.Name, dc.Type_id, e.Name, idx, e.Id))
 			}
 		}
 	}
