@@ -89,12 +89,12 @@ func GetEventQueue(c *gin.Context) {
 	answer := gin.H{"queue": make([]map[string]any, 0)}
 	for _, event := range events {
 		if apiEvent, ok := event.Second.(utilities.APIEvent); ok {
-			answer["Queued events"] = append(answer["Queued events"].([]map[string]any), map[string]any{
+			answer["queue"] = append(answer["queue"].([]map[string]any), map[string]any{
 				"Name":     apiEvent.Name,
 				"Metadata": apiEvent.Metadata,
 			})
 		} else if _, ok := event.Second.(ece.BreakpointEvent); ok {
-			answer["Queued events"] = append(answer["Queued events"].([]map[string]any), map[string]any{
+			answer["queue"] = append(answer["queue"].([]map[string]any), map[string]any{
 				"Name":     "BreakpointEvent",
 				"Metadata": make(map[string]any),
 			})
