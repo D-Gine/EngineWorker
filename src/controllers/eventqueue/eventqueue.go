@@ -1,8 +1,10 @@
 package eventqueue
 
 import (
+	"EngineWorker/src/engine"
 	"EngineWorker/src/utilities"
 	"net/http"
+	"slices"
 	"strconv"
 
 	ece "github.com/D-Gine/ECE"
@@ -16,7 +18,7 @@ type Subscriber struct {
 }
 
 func Enqueue(c *gin.Context) {
-	registry := c.MustGet("registry").(*ece.Registry)
+	eng := c.MustGet("engine").(*engine.Engine)
 
 	var event utilities.APIEvent
 	if err := c.ShouldBindJSON(&event); err != nil {
@@ -24,12 +26,14 @@ func Enqueue(c *gin.Context) {
 		return
 	}
 
-	registry.EnqueueEventByName(event.Name, event)
+	eng.Do(func(r *ece.Registry) {
+		r.EnqueueEventByName(event.Name, event)
+	})
 	c.JSON(http.StatusAccepted, gin.H{"event": event.Name, "queued": true})
 }
 
 func Subscribe(c *gin.Context) {
-	registry := c.MustGet("registry").(*ece.Registry)
+	eng := c.MustGet("engine").(*engine.Engine)
 	var subscriber Subscriber
 	if err := c.ShouldBindJSON(&subscriber); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -41,50 +45,49 @@ func Subscribe(c *gin.Context) {
 		return nil
 	}
 
-	registry.SubscribeToEventByName(subscriber.Event, callback, subscriber.Priority)
+	eng.Do(func(r *ece.Registry) {
+		r.SubscribeToEventByName(subscriber.Event, callback, subscriber.Priority)
+	})
 
 	c.JSON(http.StatusCreated, gin.H{"event": subscriber.Event, "script": subscriber.Script, "priority": subscriber.Priority})
 }
 
 func Process(c *gin.Context) {
-	registry := c.MustGet("registry").(*ece.Registry)
+	eng := c.MustGet("engine").(*engine.Engine)
 
 	event_nb, err := strconv.Atoi(c.DefaultQuery("n", "-1"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid number of events to process"})
 		return
 	}
-	var processed []ece.Pair[string, ece.Event]
-	if event_nb > 0 {
-		processed = registry.ProcessManyEvents(event_nb)
-	} else {
-		processed = registry.ProcessEvents()
-	}
 
-	if len(processed) == 0 {
-		c.JSON(http.StatusNoContent, gin.H{"message": "No events to process"})
-		return
-	}
+	eng.DoAsync(func(r *ece.Registry) {
+		if event_nb > 0 {
+			r.ProcessManyEvents(event_nb)
+		} else {
+			r.ProcessEvents()
+		}
+	})
 
-	answer := gin.H{"Processed events": make([]string, 0)}
-	for _, event := range processed {
-		answer["Processed events"] = append(answer["Processed events"].([]string), event.First)
-	}
-	c.JSON(http.StatusOK, answer)
+	c.JSON(http.StatusAccepted, gin.H{"status": "processing"})
 }
 
 func EnqueueBreakpoint(c *gin.Context) {
-	registry := c.MustGet("registry").(*ece.Registry)
+	eng := c.MustGet("engine").(*engine.Engine)
 
-	registry.EnqueueEvent(ece.BreakpointEvent{})
+	eng.Do(func(r *ece.Registry) {
+		r.EnqueueEvent(ece.BreakpointEvent{})
+	})
 
 	c.JSON(http.StatusAccepted, gin.H{"status": "ok"})
 }
 
 func GetEventQueue(c *gin.Context) {
-	registry := c.MustGet("registry").(*ece.Registry)
+	eng := c.MustGet("engine").(*engine.Engine)
 
-	events := registry.GetEventQueue()
+	events := engine.Ask(eng, func(r *ece.Registry) []ece.Pair[string, ece.Event] {
+		return slices.Clone(r.GetEventQueue())
+	})
 
 	answer := gin.H{"queue": make([]map[string]any, 0)}
 	for _, event := range events {

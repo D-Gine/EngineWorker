@@ -1,11 +1,18 @@
 package utilities
 
 import (
+	"EngineWorker/src/debug"
 	"fmt"
+	"time"
 
 	ece "github.com/D-Gine/ECE"
 	"go.starlark.net/starlark"
 	"go.starlark.net/syntax"
+)
+
+const (
+	maxExecutionSteps = 100_000
+	scriptTimeout     = 5 * time.Second
 )
 
 func EmitBuiltin(reg *ece.Registry) *starlark.Builtin {
@@ -37,6 +44,12 @@ func EmitBuiltin(reg *ece.Registry) *starlark.Builtin {
 
 func Load_scripts(reg *ece.Registry, event ece.Event, script string) {
 	thread := &starlark.Thread{Name: "Script thread"}
+	thread.SetMaxExecutionSteps(maxExecutionSteps)
+
+	timer := time.AfterFunc(scriptTimeout, func() {
+		thread.Cancel("script execution timed out")
+	})
+	defer timer.Stop()
 
 	ev, ok := event.(APIEvent)
 
@@ -49,7 +62,8 @@ func Load_scripts(reg *ece.Registry, event ece.Event, script string) {
 		for k, v := range ev.Metadata {
 			sv, err := GoToStarlark(v)
 			if err != nil {
-				panic(err)
+				debug.Error(err)
+				return
 			}
 			predeclared[k] = sv
 		}
@@ -59,6 +73,7 @@ func Load_scripts(reg *ece.Registry, event ece.Event, script string) {
 
 	_, err := starlark.ExecFileOptions(&syntax.FileOptions{}, thread, "script.star", script, predeclared)
 	if err != nil {
-		panic(err)
+		debug.Error(err)
+		return
 	}
 }
