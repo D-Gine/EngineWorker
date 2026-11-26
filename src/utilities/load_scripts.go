@@ -15,6 +15,7 @@ const (
 	scriptTimeout     = 5 * time.Second
 )
 
+// EmitBuiltin is a builtin to emit an event from a starlark script
 func EmitBuiltin(reg *ece.Registry) *starlark.Builtin {
 	return starlark.NewBuiltin("emit", func(
 		thread *starlark.Thread,
@@ -42,6 +43,7 @@ func EmitBuiltin(reg *ece.Registry) *starlark.Builtin {
 	})
 }
 
+// Load_scripts executes a starlark script that can access all the attributes of an event given in parameter
 func Load_scripts(reg *ece.Registry, event ece.Event, script string) {
 	thread := &starlark.Thread{Name: "Script thread"}
 	thread.SetMaxExecutionSteps(maxExecutionSteps)
