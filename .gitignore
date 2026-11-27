@@ -11,7 +11,7 @@ worker_bin
 
 # Test binary, built with `go test -c`
 *.test
-tests/test_outputs
+tests/
 
 # Code coverage profiles and other test artifacts
 *.out
