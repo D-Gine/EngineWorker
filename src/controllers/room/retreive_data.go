@@ -72,9 +72,12 @@ func retreive_entities_rows() (*sql.Rows, error) {
 	return rows, err
 }
 
-func retreive_entities(rows *sql.Rows) ([]Entity, error) {
-	defer rows.Close()
-	var entities []Entity
+func retreive_entities(rows *sql.Rows) (entities []Entity, err error) {
+	defer func() {
+		if closeErr := rows.Close(); closeErr != nil && err == nil {
+			entities, err = nil, closeErr
+		}
+	}()
 
 	for rows.Next() {
 		var e Entity
@@ -89,6 +92,9 @@ func retreive_entities(rows *sql.Rows) ([]Entity, error) {
 			return nil, err
 		}
 		entities = append(entities, e)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 	return entities, nil
 }
@@ -124,7 +130,7 @@ func create_new_registry(entities []Entity) (*ece.Registry, error) {
 }
 
 func RetreiveData(c *gin.Context) {
-	if database.Room.Errored == true {
+	if database.Room.Errored {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "rooms id are either missing or does not exist"})
 		return
 	}

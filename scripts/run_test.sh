@@ -19,7 +19,7 @@ NC=$'\e[0m'
 export DB_HOST=127.0.0.1
 DB_CONTAINER=dengine-db-test
 
-export GOTOOLCHAIN="${GOTOOLCHAIN:-go1.27.1}"
+export GOTOOLCHAIN="${GOTOOLCHAIN:-go1.27.4}"
 export PATH="$(go env GOPATH)/bin:$PATH"
 
 # '--reset' flag to reset installations
