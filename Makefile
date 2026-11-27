@@ -16,10 +16,7 @@ MAIN_FILE = ./src/main.go
 # SWAG = $(GO) run github.com/swaggo/swag/cmd/swag@latest
 # SWAG = swag
 
-setup:
-	git submodule update --init --recursive
-
-all:	setup build
+all:	build
 
 build:
 	# $(SWAG) init -g $(MAIN_FILE) -o $(DOCS_FOLDER)
@@ -30,6 +27,12 @@ run: build
 
 re:     fclean all
 
+dev-setup:
+	./scripts/setup_local_dev.sh
+
+tests:
+	./scripts/run_test.sh
+
 ## CLEANING RULES
 clean:
 	$(GO) clean
@@ -37,4 +40,4 @@ clean:
 fclean: clean
 	$(RM) $(BINARY_NAME)
 
-.PHONY: all build run re clean fclean
+.PHONY: all build run re clean fclean dev-setup

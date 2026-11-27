@@ -3,7 +3,7 @@
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 API_DIR="${API_DIR:-$ROOT_DIR}"
-OUT_DIR="$ROOT_DIR/tests/test_outputs"
+OUT_DIR="$ROOT_DIR/tests"
 rm -rf $OUT_DIR
 mkdir -p "$OUT_DIR"
 

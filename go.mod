@@ -3,7 +3,7 @@ module EngineWorker
 go 1.27.1
 
 require (
-	github.com/D-Gine/ECE v1.0.5-0.20261031195925-5cf6f993ca95
+	github.com/D-Gine/ECE v1.0.5
 	github.com/gin-gonic/gin v1.12.0
 	github.com/lib/pq v1.12.3
 	go.starlark.net v0.0.0-20261021141710-4f4267fb140d
