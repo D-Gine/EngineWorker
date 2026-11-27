@@ -7,11 +7,16 @@ import (
 )
 
 type RoomIds struct {
+	Errored  bool
 	Campaign string
 	Rulest   string
 }
 
-var Room RoomIds
+var Room RoomIds = RoomIds{
+	Errored:  true,
+	Campaign: "",
+	Rulest:   "",
+}
 
 func verify_ruleset() error {
 	var id string
@@ -28,6 +33,17 @@ func verify_ruleset() error {
 }
 
 func verify_campaign() error {
+	// TO DO after db
+	// var id string
+	// err = DB.QueryRow(`
+	// 	SELECT
+	// 		c.id
+	// 	FROM campaign c
+	// 	WHERE c.id=$1
+	// `, Room.Campaign).Scan(&id)
+	// if err != nil {
+	// 	return err
+	// }
 	return nil
 }
 
@@ -59,6 +75,7 @@ func RetreiveRoomInformations() {
 	if exit_err {
 		return
 	}
+	Room.Errored = false
 	debug.Success("room informations found")
 	debug.Message("running campaign on\n\t- Ruleset: " + Room.Rulest + "\n\t- Campaign: " + Room.Campaign)
 }

@@ -10,6 +10,10 @@ func Success(msg string) {
 	fmt.Println(Colorize(GREEN, "SUCCESS: "), msg)
 }
 
+func Ok(msg string) {
+	fmt.Println(Colorize(BLUE, "OK: "), msg)
+}
+
 func ErrorMessage(msg string) {
 	fmt.Println(Colorize(RED, "ERROR: "), msg)
 }

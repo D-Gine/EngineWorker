@@ -3,7 +3,7 @@
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 API_DIR="${API_DIR:-$ROOT_DIR}"
-OUT_DIR="$ROOT_DIR/tests/test_outputs"
+OUT_DIR="$ROOT_DIR/tests"
 rm -rf $OUT_DIR
 mkdir -p "$OUT_DIR"
 
@@ -19,7 +19,7 @@ NC=$'\e[0m'
 export DB_HOST=127.0.0.1
 DB_CONTAINER=dengine-db-test
 
-export GOTOOLCHAIN="${GOTOOLCHAIN:-go1.27.1}"
+export GOTOOLCHAIN="${GOTOOLCHAIN:-go1.27.4}"
 export PATH="$(go env GOPATH)/bin:$PATH"
 
 # '--reset' flag to reset installations
@@ -31,11 +31,11 @@ if [[ $* == '--re-install' ]]; then
     go install golang.org/x/vuln/cmd/govulncheck@latest
     go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
     echo "${G}DONE${NC}"
-    echo ""
 else
     echo "run '--re-install' to install right version of golang tools"
-    echo ""
 fi
+
+echo ""
 
 cleanup() {
   [ -n "$API_PID" ] && kill "$API_PID" 2>/dev/null

@@ -7,7 +7,7 @@ import (
 	"reflect"
 
 	"go.starlark.net/starlark"
-	"go.starlark.net/starlarkjson"
+	starlarkjson "go.starlark.net/lib/json"
 )
 
 func GoToStarlark(v any) (starlark.Value, error) {
@@ -69,7 +69,7 @@ func GoToStarlark(v any) (starlark.Value, error) {
 	case map[string]json.RawMessage:
 		jsonBytes, err := json.Marshal(x)
 		if err != nil {
-			return nil, fmt.Errorf("Error marshaling map: %s", err)
+			return nil, fmt.Errorf("error marshaling map: %s", err)
 		}
 		jsonString := string(jsonBytes)
 

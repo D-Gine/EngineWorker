@@ -6,12 +6,14 @@ const (
 	RESET Color = 0
 	RED   Color = 1
 	GREEN Color = 2
+	BLUE  Color = 3
 )
 
 const reset_s string = "\033[0m"
 
 const red_s string = "\033[31m"
 const green_s string = "\033[32m"
+const blue_s string = "\033[34m"
 
 func Colorize(c Color, msg string) string {
 	if c == RED {
@@ -19,6 +21,9 @@ func Colorize(c Color, msg string) string {
 	}
 	if c == GREEN {
 		return green_s + msg + reset_s
+	}
+	if c == BLUE {
+		return blue_s + msg + reset_s
 	}
 	return ""
 }

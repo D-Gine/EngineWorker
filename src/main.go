@@ -2,12 +2,13 @@ package main
 
 import (
 	"EngineWorker/src/controllers/eventqueue"
+	"EngineWorker/src/controllers/room"
 	"os"
 
 	"EngineWorker/src/database"
 	"EngineWorker/src/debug"
-
 	ece "github.com/D-Gine/ECE"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,6 +32,11 @@ func main() {
 		c.Next()
 	})
 	debug.Message("")
+
+	rooms := router.Group("/room")
+	{
+		rooms.POST("/retreive_data", room.RetreiveData)
+	}
 
 	events := router.Group("/events")
 	{
