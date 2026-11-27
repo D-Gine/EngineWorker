@@ -7,6 +7,8 @@ import (
 
 	"EngineWorker/src/database"
 	"EngineWorker/src/debug"
+	"EngineWorker/src/engine"
+
 	ece "github.com/D-Gine/ECE"
 
 	"github.com/gin-gonic/gin"
@@ -18,6 +20,7 @@ func main() {
 	// Create a Gin router with default middleware (logger and recovery)
 	router := gin.Default()
 	registry := ece.NewRegistry()
+	eng := engine.NewEngine(registry)
 
 	// Database setup
 	debug.Message("=== DATABASE ===")
@@ -28,7 +31,7 @@ func main() {
 	database.RetreiveRoomInformations()
 
 	router.Use(func(c *gin.Context) {
-		c.Set("registry", registry)
+		c.Set("engine", eng)
 		c.Next()
 	})
 	debug.Message("")
