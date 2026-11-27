@@ -37,17 +37,6 @@ fi
 
 echo ""
 
-if [[ $* == '--no-update' ]]; then
-    echo "The update of the submodule is locked"
-else
-    echo "Updating submodules"
-    echo "run '--no-update' if you don't want to update submodule"
-    git submodule update --init --recursive
-    echo "${G}DONE${NC}"
-fi
-
-echo ""
-
 cleanup() {
   [ -n "$API_PID" ] && kill "$API_PID" 2>/dev/null
   docker rm -f "$DB_CONTAINER" >/dev/null 2>&1
