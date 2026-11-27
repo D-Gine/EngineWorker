@@ -13,14 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type StaticComponent struct {
-	Id      string `json:"id"`
-	Name    string `json:"name"`
-	Type_id string `json:"type_id"`
-	Value   any    `json:"value"`
-}
-
-type DynamicComponent struct {
+type Component struct {
 	Id      string `json:"id"`
 	Name    string `json:"name"`
 	Type_id string `json:"type_id"`
@@ -28,11 +21,11 @@ type DynamicComponent struct {
 }
 
 type Entity struct {
-	Id          string             `json:"id"`
-	Name        string             `json:"name"`
-	Description string             `json:"description"`
-	Sc          []StaticComponent  `json:"static_components"`
-	Dc          []DynamicComponent `json:"dynamic_components"`
+	Id          string      `json:"id"`
+	Name        string      `json:"name"`
+	Description string      `json:"description"`
+	Sc          []Component `json:"static_components"`
+	Dc          []Component `json:"dynamic_components"`
 }
 
 func retreive_entities_rows() (*sql.Rows, error) {
